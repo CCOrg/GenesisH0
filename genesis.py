@@ -1,5 +1,5 @@
 import hashlib, binascii, struct, array, os, time, sys, optparse
-import scrypt
+#import scrypt
 
 from construct import *
 
@@ -33,7 +33,7 @@ def get_args():
   parser.add_option("-n", "--nonce", dest="nonce", default=0,
                    type="int", help="the first value of the nonce that will be incremented when searching the genesis hash")
   parser.add_option("-a", "--algorithm", dest="algorithm", default="SHA256",
-                    help="the PoW algorithm: [SHA256|scrypt|X11|X13|X15]")
+                    help="the PoW algorithm: [SHA256|X11|X13|X15]") #help="the PoW algorithm: [SHA256|scrypt|X11|X13|X15]")
   parser.add_option("-p", "--pubkey", dest="pubkey", default="04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f",
                    type="string", help="the pubkey found in the output script")
   parser.add_option("-v", "--value", dest="value", default=5000000000,
@@ -43,16 +43,16 @@ def get_args():
   return options
 
 def get_algorithm(options):
-  supported_algorithms = ["SHA256", "scrypt", "X11", "X13", "X15"]
+  supported_algorithms = ["SHA256", "X11", "X13", "X15"] # ["SHA256", "scrypt", "X11", "X13", "X15"]
   if options.algorithm in supported_algorithms:
     return options.algorithm
   else:
     sys.exit("Error: Given algorithm must be one of: " + str(supported_algorithms))
 
 def get_difficulty(algorithm):
-  if algorithm == "scrypt":
-    return 0x1e0ffff0, 0x0ffff0 * 2**(8*(0x1e - 3))
-  elif algorithm == "SHA256":
+  #if algorithm == "scrypt":
+  #  return 0x1e0ffff0, 0x0ffff0 * 2**(8*(0x1e - 3))
+  if algorithm == "SHA256":
     return 0x1d00ffff, 0x00ffff * 2**(8*(0x1d - 3)) 
   elif algorithm == "X11" or algorithm == "X13" or algorithm == "X15":
     return 0x1e0ffff0, 0x0ffff0 * 2**(8*(0x1e - 3))
@@ -147,9 +147,9 @@ def generate_hash(data_block, algorithm, start_nonce, target):
 def generate_hashes_from_block(data_block, algorithm):
   sha256_hash = hashlib.sha256(hashlib.sha256(data_block).digest()).digest()[::-1]
   header_hash = ""
-  if algorithm == 'scrypt':
-    header_hash = scrypt.hash(data_block,data_block,1024,1,1,32)[::-1] 
-  elif algorithm == 'SHA256':
+  #if algorithm == 'scrypt':
+  #  header_hash = scrypt.hash(data_block,data_block,1024,1,1,32)[::-1] 
+  if algorithm == 'SHA256':
     header_hash = sha256_hash
   elif algorithm == 'X11':
     try:
